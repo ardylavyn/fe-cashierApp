@@ -1,6 +1,7 @@
 import AppLayout from "@/layout/AppLayout.vue";
 import Login from "@/pages/auth/Login.vue";
 import Dashboard from "@/pages/Dashboard.vue";
+import CategoryList from "@/pages/product-categoires/CategoryList.vue";
 import { useAuthStore } from "@/stores/auth.store";
 import { createRouter, createWebHistory } from "vue-router";
 
@@ -14,22 +15,16 @@ const router = createRouter({
     {
       // Halaman login
       path: "/login",
-
       // Nama route
       name: "login",
-
       // Component yang ditampilkan
       component: Login,
-
       // guest:true artinya halaman ini hanya untuk user yang BELUM login
       meta: { guest: true },
     },
 
     {
-      // Route utama (/)
       path: "/",
-
-      // Saat membuka "/", AppLayout akan dirender terlebih dahulu
       component: AppLayout,
 
       // requiresAuth:true artinya halaman ini wajib login
@@ -37,15 +32,15 @@ const router = createRouter({
 
       children: [
         {
-          // Path kosong artinya tetap "/"
-          // karena dia berada di dalam AppLayout
+          // Path kosong artinya tetap "/" karena dia berada di dalam AppLayout
           path: "",
-
-          // Nama route
           name: "dashboard",
-
-          // Component yang ditampilkan di dalam <RouterView />
           component: Dashboard,
+        },
+        {
+          path: "/product-categories",
+          name: "product-categories",
+          component: CategoryList,
         },
       ],
     },

@@ -34,6 +34,18 @@ const menuItems = ref([
       },
     ],
   },
+
+  {
+    label: "Manajemen",
+    items: [
+      {
+        icon: "pi pi-tag",
+        // kalau diklik → pergi ke URL "/"
+        to: "/product-categories",
+        label: "Product Categories",
+      },
+    ],
+  },
 ]);
 </script>
 
@@ -69,6 +81,7 @@ const menuItems = ref([
         </div>
       </div>
     </div>
+
     <!-- User Profile -->
     <div class="p-4 border-t border-surface-200">
       <button @click="logoutDialog = true" class="group w-full flex items-center gap-3 p-3 rounded-xl hover:bg-surface-200 transition-colors">
@@ -90,6 +103,7 @@ const menuItems = ref([
     </div>
   </div>
 
+  <!-- Dialog Log Out -->
   <Dialog v-model:visible="logoutDialog" modal header="Confirm Logout" :modal="true" class="w-100">
     <span class="text-surface-500 block mb-8">Are u sure to logout?</span>
     <div class="flex justify-end gap-2">
