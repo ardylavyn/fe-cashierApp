@@ -44,6 +44,12 @@ const menuItems = ref([
         to: "/product-categories",
         label: "Product Categories",
       },
+      {
+        icon: "pi pi-box",
+        // kalau diklik → pergi ke URL "/"
+        to: "/products",
+        label: "Products",
+      },
     ],
   },
 ]);

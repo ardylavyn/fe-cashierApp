@@ -1,76 +1,35 @@
-<script setup lang="ts">
-import { Button, Column, ConfirmDialog, DataTable, IconField, InputIcon, InputText, Select, useConfirm, useToast } from "primevue";
+<script setup>
+import { Button, Column, DataTable, IconField, InputIcon, InputText, Select } from "primevue";
 import { RouterLink } from "vue-router";
-import { useRouter } from "vue-router";
-
+import { useProductStore } from "@/stores/product.store";
 import { useProductCategoryStore } from "@/stores/product-category.store";
 import { storeToRefs } from "pinia";
 import { onMounted } from "vue";
 import { useDebounceFn } from "@vueuse/core";
-import { outlined } from "@primeuix/themes/aura/message";
-import { deleteCategory } from "@/api/product-categories.api";
-import type CategoryForm from "./CategoryForm.vue";
 
-const router = useRouter();
+const productStore = useProductStore();
+const { fetch, setLimit, setPage, prevPage, nextPage } = productStore;
 
-const productCategoryStore = useProductCategoryStore();
-// Ini untuk actions
-const { fetch, setLimit, setPage, nextPage, prevPage } = productCategoryStore;
-// Ini untuk variable
-const { items, loading, limit, currentPage, totalPages, search } = storeToRefs(productCategoryStore);
-
-// ini tadi yang dipasang di main.ts yang ConfirmationService
-const confirm = useConfirm();
-const toast = useToast();
+const { items, pagination, loading, limit, search, byCategory } = storeToRefs(productStore);
 
 const onSearch = useDebounceFn(() => {
   // Kalau ada pencarian baru, tampilkan hasil dari halaman pertama.
   setPage(1);
 }, 400);
 
-const confirmDelete = (id: number) => {
-  confirm.require({
-    message: "Are u sure to delete this category?",
-    header: "Confirm Delete",
-    icon: "pi pi-exclamation-triangle",
-    rejectProps: {
-      label: "cancel",
-      severity: "secondary",
-      outlined: true,
-    },
-    acceptProps: {
-      label: "Delete",
-      severity: "danger",
-    },
-
-    accept: async () => {
-      try {
-        await deleteCategory(id);
-        toast.add({
-          severity: "success",
-          summary: "Deleted",
-          detail: "Category Removed",
-          life: 3000,
-        });
-        fetch();
-      } catch (error) {
-        toast.add({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to delete category",
-          life: 3000,
-        });
-      }
-    },
-  });
+const onCategoryChange = () => {
+  productStore.page = 1;
+  fetch();
 };
 
-const confirmEdit = (id: number) => {
-  router.push(`/product-categories/${id}/edit`);
-};
+const productCategoryStore = useProductCategoryStore();
+const { fetchOptions } = productCategoryStore;
+
+const { options } = storeToRefs(productCategoryStore);
 
 onMounted(() => {
   fetch();
+  fetchOptions();
 });
 </script>
 
@@ -78,49 +37,40 @@ onMounted(() => {
   <div class="min-h-screen bg-surface-50 font-sans text-surface-900">
     <div class="flex justify-between items-center mb-8">
       <div>
-        <h1 class="text-2xl font-bold text-surface-900 mb-1">Product Categories</h1>
-        <p class="text-surface-500 text-sm">The list here show all product categories</p>
+        <h1 class="text-2xl font-bold text-surface-900 mb-1">Products</h1>
+        <p class="text-surface-500 text-sm">The list here show all the products</p>
       </div>
 
       <!-- as-child itu supaya Link tampil seperti Button -->
       <Button as-child v-slot="slotProps">
         <!-- name itu dari index.ts -->
-        <RouterLink :to="{ name: 'product-categories-create' }" :class="slotProps.class"> Add Category </RouterLink>
+        <RouterLink :class="slotProps.class"> Add Product </RouterLink>
       </Button>
     </div>
 
     <div class="bg-white rounded-2xl border border-surface-200 p-2">
-      <div class="flex flex-col md:flex-row justify-between items-center px-4 py-4 gap-4">
+      <div class="flex flex-col md:flex-row justify-between items-center py-4 px-4 gap-4">
+        <!-- SEARCH -->
         <IconField iconPosition="left" class="w-full md:w-80">
           <InputIcon class="pi pi-search text-surface-400" />
           <InputText v-model="search" placeholder="Search" @input="onSearch" />
         </IconField>
+
+        <!-- FILTERING -->
+        <!-- optionVlue itu yang nnti diambil berdasarkan id -->
+        <Select v-model="byCategory" :options="options" optionLabel="name" optionValue="id" placeholder="All Categories" @update:model-value="onCategoryChange" />
       </div>
-      <!-- Oke, saya diberi sebuah array (:value="items"). Saya akan mengambil satu object untuk setiap baris. Datanya dari items -->
 
-      <!-- Baris pertama, Object yang diambil adalah :
-
-        {
-            id:1,
-            name:"Makanan"
-        }
-
-        Lalu PrimeVue memberi nama object itu "data" ketika mengirimnya ke slot.
-
-        data =
-        {
-            id:1,
-            name:"Makanan"
-        }
-
-      -->
       <DataTable :value="items" :loading="loading" data-key="id" class="clean-table" :row-hover="true">
+        <!-- No -->
         <Column header="No.">
           <template #body="{ index }">
-            {{ (currentPage - 1) * limit + index + 1 }}
+            {{ (pagination.current_page - 1) * limit + index + 1 }}
           </template>
         </Column>
-        <Column field="name" header="name" class="min-w-[16rem]">
+
+        <!-- Nama Produk -->
+        <Column field="name" header="Name" class="min-w-[16rem]">
           <!-- Saya menerima object dari PrimeVue, lalu saya ambil property data -->
           <template #body="{ data }">
             <div class="flex items-center gap-3">
@@ -132,7 +82,23 @@ onMounted(() => {
           </template>
         </Column>
 
-        <Column field="description" header="Description"></Column>
+        <!-- Harga Produk -->
+        <Column header="Price">
+          <template #body="{ data }">
+            {{
+              new Intl.NumberFormat("id-ID", {
+                style: "currency",
+                currency: "IDR",
+              }).format(Number(data.price))
+            }}
+          </template>
+        </Column>
+
+        <!-- Stok Produk -->
+        <Column field="stock" header="Stock"></Column>
+
+        <!-- Category Produk -->
+        <Column field="category.name" header="Category"></Column>
 
         <Column header="Actions" style="width: 5rem">
           <template #body="{ data }">
@@ -166,7 +132,7 @@ onMounted(() => {
         </div>
 
         <div class="flex items-center gap-4">
-          <span class="text-sm font-medium text-surface-600"> {{ currentPage }} of {{ totalPages }} </span>
+          <span class="text-sm font-medium text-surface-600"> {{ pagination.current_page }} of {{ pagination.last_page }} </span>
 
           <div class="flex gap-1">
             <Button
@@ -174,7 +140,7 @@ onMounted(() => {
               text
               rounded
               severity="secondary"
-              :disabled="currentPage === 1"
+              :disabled="pagination.current_page === 1"
               class="w-9! h-9! border! border-surface-500! hover:bg-surface-50!"
               @click="prevPage()"
             ></Button>
@@ -183,7 +149,7 @@ onMounted(() => {
               text
               rounded
               severity="secondary"
-              :disabled="currentPage === totalPages"
+              :disabled="pagination.current_page === pagination.last_page"
               class="w-9! h-9! border! border-surface-500! hover:bg-surface-50!"
               @click="nextPage()"
             ></Button>
@@ -192,6 +158,4 @@ onMounted(() => {
       </div>
     </div>
   </div>
-
-  <ConfirmDialog />
 </template>

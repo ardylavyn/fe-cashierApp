@@ -1,11 +1,11 @@
-import { getCategories, getCategoryOptions } from "@/api/product-categories.api";
-import type { productCategory } from "@/types/product-category";
+import { getProducts } from "@/api/products.api";
+import type { Product } from "@/types/product";
 import { defineStore } from "pinia";
 
-export const useProductCategoryStore = defineStore("productCategory", {
+export const useProductStore = defineStore("Product", {
   state: () => ({
-    items: [] as productCategory[],
-    options: [] as productCategory[],
+    items: [] as Product[],
+
     pagination: {
       current_page: 1,
       last_page: 1,
@@ -14,38 +14,30 @@ export const useProductCategoryStore = defineStore("productCategory", {
       from: 0,
       to: 0,
     },
+
     page: 1,
     limit: 5,
+
     search: "",
+
+    byCategory: undefined as number | undefined,
+
     loading: false,
   }),
-
-  getters: {
-    currentPage: (state) => state.pagination.current_page || 1,
-    totalPages: (state) => state.pagination.last_page || 1,
-  },
 
   actions: {
     async fetch() {
       this.loading = true;
 
       try {
-        const res = await getCategories({ page: this.page, search: this.search, limit: this.limit });
+        // res itu respon
+        const res = await getProducts({ page: this.page, search: this.search, limit: this.limit, byCategory: this.byCategory });
         this.items = res.data.data.items;
         this.pagination = res.data.data.pagination;
       } catch (error) {
-        console.error("Failed fetch categories: ", error);
+        console.error("Failed fetch products: ", error);
       } finally {
         this.loading = false;
-      }
-    },
-
-    async fetchOptions() {
-      try {
-        const res = await getCategoryOptions();
-        this.options = res.data.data;
-      } catch (error) {
-        console.error("Failed fetch category options:", error);
       }
     },
 
