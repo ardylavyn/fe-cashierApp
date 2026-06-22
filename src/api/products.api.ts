@@ -3,17 +3,17 @@ import api from "./axios";
 // export artinya Function ini boleh dipakai dari file lain.
 export const getProducts = (params?: { page?: number; search?: string; limit?: number; byCategory?: number }) => api.get("/products", { params });
 
-// export const createCategory = (payload: { name: string; description?: string }) => api.post("/product-categories", payload);
+export const createProduct = (payload: { name: string; product_category_id: number; price: string; stock: string }) => api.post("/products", payload);
 
-// export const uploadCategoryImage = (id: number, formData: FormData) =>
-//   api.post(`/product-categories/${id}/image`, formData, {
-//     headers: {
-//       "Content-Type": "multipart/form-data",
-//     },
-//   });
+export const uploadProductImage = (id: number, formData: FormData) =>
+  api.post(`/products/${id}/image`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 
-// export const getCategoryById = (id: number) => api.get(`/product-categories/${id}`);
-// export const updateCategory = (id: number, payload: { name: string; description?: string }) => api.put(`/product-categories/${id}`, payload);
+export const getProductById = (id: number) => api.get(`/products/${id}`);
+export const updateProduct = (id: number, payload: { name: string; product_category_id: number; price: string; stock: string }) => api.put(`/products/${id}`, payload);
 
-// // pakai `..` karena ada variabel yang harus disisipkan ke dalam string
-// export const deleteCategory = (id: number) => api.delete(`/product-categories/${id}`);
+// pakai `..` karena ada variabel yang harus disisipkan ke dalam string
+export const deleteProduct = (id: number) => api.delete(`/products/${id}`);

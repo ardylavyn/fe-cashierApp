@@ -50,6 +50,12 @@ const menuItems = ref([
         to: "/products",
         label: "Products",
       },
+      {
+        icon: "pi pi-user",
+        // kalau diklik → pergi ke URL "/"
+        to: "/customers",
+        label: "Customers",
+      },
     ],
   },
 ]);

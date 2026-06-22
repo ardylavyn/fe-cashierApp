@@ -1,8 +1,11 @@
 import AppLayout from "@/layout/AppLayout.vue";
 import Login from "@/pages/auth/Login.vue";
+import CustomerForm from "@/pages/customers/CustomerForm.vue";
+import CustomerList from "@/pages/customers/CustomerList.vue";
 import Dashboard from "@/pages/Dashboard.vue";
 import CategoryForm from "@/pages/product-categoires/CategoryForm.vue";
 import CategoryList from "@/pages/product-categoires/CategoryList.vue";
+import ProductsForm from "@/pages/products/ProductsForm.vue";
 import ProductsList from "@/pages/products/ProductsList.vue";
 import { useAuthStore } from "@/stores/auth.store";
 import { createRouter, createWebHistory } from "vue-router";
@@ -58,6 +61,31 @@ const router = createRouter({
           path: "/products",
           name: "products",
           component: ProductsList,
+        },
+        {
+          path: "/products/create",
+          name: "products-create",
+          component: ProductsForm,
+        },
+        {
+          path: "/products/:id/edit",
+          name: "products-edit",
+          component: ProductsForm,
+        },
+        {
+          path: "/customers",
+          name: "customers",
+          component: CustomerList,
+        },
+        {
+          path: "/customers/create",
+          name: "customers-create",
+          component: CustomerForm,
+        },
+        {
+          path: "/customers/:id/edit",
+          name: "customers-edit",
+          component: CustomerForm,
         },
       ],
     },
