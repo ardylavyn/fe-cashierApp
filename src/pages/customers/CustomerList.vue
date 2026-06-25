@@ -94,6 +94,11 @@ const confirmDelete = (id: number) => {
       </div>
 
       <DataTable :value="items" :loading="loading" data-key="id" class="clean-table" :row-hover="true">
+        <Column header="No.">
+          <template #body="{ index }">
+            {{ (pagination.current_page - 1) * limit + index + 1 }}
+          </template>
+        </Column>
         <Column field="name" header="Name" class="min-w-[16rem]">
           <!-- Saya menerima object dari PrimeVue, lalu saya ambil property data -->
           <template #body="{ data }">

@@ -51,10 +51,22 @@ const menuItems = ref([
         label: "Products",
       },
       {
-        icon: "pi pi-user",
+        icon: "pi pi-users",
         // kalau diklik → pergi ke URL "/"
         to: "/customers",
         label: "Customers",
+      },
+      {
+        icon: "pi pi-receipt",
+        // kalau diklik → pergi ke URL "/"
+        to: "/transaction",
+        label: "Transactions",
+      },
+      {
+        icon: "pi pi-undo",
+        // kalau diklik → pergi ke URL "/"
+        to: "/refund",
+        label: "Refund",
       },
     ],
   },

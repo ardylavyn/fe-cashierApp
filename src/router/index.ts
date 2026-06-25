@@ -7,6 +7,10 @@ import CategoryForm from "@/pages/product-categoires/CategoryForm.vue";
 import CategoryList from "@/pages/product-categoires/CategoryList.vue";
 import ProductsForm from "@/pages/products/ProductsForm.vue";
 import ProductsList from "@/pages/products/ProductsList.vue";
+import RefundForm from "@/pages/refunds/RefundForm.vue";
+import RefundsList from "@/pages/refunds/RefundsList.vue";
+import TransactionsForm from "@/pages/transactions/TransactionsForm.vue";
+import TransactionsList from "@/pages/transactions/TransactionsList.vue";
 import { useAuthStore } from "@/stores/auth.store";
 import { createRouter, createWebHistory } from "vue-router";
 
@@ -86,6 +90,26 @@ const router = createRouter({
           path: "/customers/:id/edit",
           name: "customers-edit",
           component: CustomerForm,
+        },
+        {
+          path: "/transaction",
+          name: "transactions",
+          component: TransactionsList,
+        },
+        {
+          path: "/transactions/:id/show",
+          name: "transactions-show",
+          component: TransactionsForm,
+        },
+        {
+          path: "/refund",
+          name: "refunds",
+          component: RefundsList,
+        },
+        {
+          path: "/refunds/create",
+          name: "refunds-create",
+          component: RefundForm,
         },
       ],
     },
