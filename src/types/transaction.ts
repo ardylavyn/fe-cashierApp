@@ -1,4 +1,5 @@
 import type { Customer } from "./customer";
+import type { Product } from "./product";
 import type { Refund } from "./refund";
 import type { TransactionItem } from "./transaction-item";
 
@@ -13,4 +14,9 @@ export interface Transaction {
   tax: string;
   total: string;
   created_at: string;
+}
+
+export interface CartItem {
+  product: Product;
+  quantity: number;
 }

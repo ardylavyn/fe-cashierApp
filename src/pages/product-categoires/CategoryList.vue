@@ -10,8 +10,11 @@ import { useDebounceFn } from "@vueuse/core";
 import { outlined } from "@primeuix/themes/aura/message";
 import { deleteCategory } from "@/api/product-categories.api";
 import type CategoryForm from "./CategoryForm.vue";
+import { usePermission } from "@/composable/usePermission.ts";
 
 const router = useRouter();
+
+const { can, canAny } = usePermission();
 
 const productCategoryStore = useProductCategoryStore();
 // Ini untuk actions
@@ -83,7 +86,7 @@ onMounted(() => {
       </div>
 
       <!-- as-child itu supaya Link tampil seperti Button -->
-      <Button as-child v-slot="slotProps">
+      <Button as-child v-slot="slotProps" v-if="can('create_product_categories')">
         <!-- name itu dari index.ts -->
         <RouterLink :to="{ name: 'product-categories-create' }" :class="slotProps.class"> Add Category </RouterLink>
       </Button>
@@ -134,25 +137,25 @@ onMounted(() => {
 
         <Column field="description" header="Description"></Column>
 
-        <Column header="Actions" style="width: 5rem">
+        <Column header="Actions" style="width: 5rem" v-if="canAny(['edit_product_categories', 'delete_product_categories'])">
           <template #body="{ data }">
             <div class="flex items-center gap-2">
               <Button
-                icon="pi pi-trash"
-                text
-                rounded
-                severity="danger"
-                class="w-9! h-9! border-surface-200! text-surface-200! hover:text-red-600! hover:border-primary-500 hover:bg-primary-50 bg-white"
-                @click="confirmDelete(data.id)"
-              />
-
-              <Button
+                v-if="can('edit_product_categories')"
                 icon="pi pi-pencil"
                 text
                 rounded
-                severity="danger"
-                class="w-9! h-9! border-surface-200! text-surface-200! hover:text-red-600! hover:border-primary-500 hover:bg-primary-50 bg-white"
+                class="w-9! h-9! border-surface-200! text-surface-200! hover:text-primary-600! hover:border-primary-500 hover:bg-primary-50 bg-white"
                 @click="confirmEdit(data.id)"
+              />
+
+              <Button
+                v-if="can('delete_product_categories')"
+                icon="pi pi-trash"
+                text
+                rounded
+                class="w-9! h-9! border-surface-200! text-surface-200! hover:text-red-600! hover:border-red-500 hover:bg-red-50 bg-white"
+                @click="confirmDelete(data.id)"
               />
             </div>
           </template>

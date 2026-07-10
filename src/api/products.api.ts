@@ -3,6 +3,8 @@ import api from "./axios";
 // export artinya Function ini boleh dipakai dari file lain.
 export const getProducts = (params?: { page?: number; search?: string; limit?: number; byCategory?: number }) => api.get("/products", { params });
 
+export const getProductsOptions = (params?: { search?: string; limit?: number; byCategory?: number }) => api.get("/products/options", { params });
+
 export const createProduct = (payload: { name: string; product_category_id: number; price: string; stock: string }) => api.post("/products", payload);
 
 export const uploadProductImage = (id: number, formData: FormData) =>

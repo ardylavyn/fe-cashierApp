@@ -39,6 +39,24 @@ export const useAuthStore = defineStore("auth", {
     isAuthenticated: !!localStorage.getItem("token"),
   }),
 
+  getters: {
+    hasPermission:
+      (state) =>
+      (permission: string): boolean => {
+        return state.user?.permissions?.includes(permission) ?? false;
+      },
+    hasRole:
+      (state) =>
+      (role: string): boolean => {
+        return state.user?.roles?.includes(role) ?? false;
+      },
+    hasAnyPermissions:
+      (state) =>
+      (Permissions: string[]): boolean => {
+        return Permissions.some((p) => state.user?.permissions?.includes(p) ?? false);
+      },
+  },
+
   actions: {
     /*
      * Method login

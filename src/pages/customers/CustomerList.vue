@@ -8,8 +8,11 @@ import { RouterLink } from "vue-router";
 import { useRouter } from "vue-router";
 import { useDebounceFn } from "@vueuse/core";
 import { deleteCustomer } from "@/api/customers.api";
+import { usePermission } from "@/composable/usePermission.ts";
 
 const router = useRouter();
+
+const { can, canAny } = usePermission();
 
 const CustomerStore = useCustomerStore();
 const { fetch, setLimit, setPage, nextPage, prevPage } = CustomerStore;
@@ -113,7 +116,7 @@ const confirmDelete = (id: number) => {
 
         <Column field="phone" header="Number phone"></Column>
 
-        <Column header="Actions" style="width: 5rem">
+        <Column header="Actions" style="width: 5rem" v-if="canAny(['edit_customers', 'delete_customers'])">
           <template #body="{ data }">
             <div class="flex items-center gap-2">
               <Button

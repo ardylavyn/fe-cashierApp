@@ -7,6 +7,9 @@ import { storeToRefs } from "pinia";
 import { onMounted } from "vue";
 import { useDebounceFn } from "@vueuse/core";
 import { deleteProduct } from "@/api/products.api";
+import { usePermission } from "@/composable/usePermission.ts";
+
+const { can, canAny } = usePermission();
 const productStore = useProductStore();
 
 const { fetch, setLimit, setPage, prevPage, nextPage } = productStore;
@@ -87,7 +90,7 @@ onMounted(() => {
       </div>
 
       <!-- as-child itu supaya Link tampil seperti Button -->
-      <Button as-child v-slot="slotProps">
+      <Button as-child v-slot="slotProps" v-if="can('create_products')">
         <!-- name itu dari index.ts -->
         <RouterLink :to="{ name: 'products-create' }" :class="slotProps.class"> Add Product </RouterLink>
       </Button>
@@ -156,7 +159,7 @@ onMounted(() => {
         <!-- Category Produk -->
         <Column field="category.name" header="Category"></Column>
 
-        <Column header="Actions" style="width: 5rem">
+        <Column header="Actions" style="width: 5rem" v-if="canAny(['edit_products', 'delete_products'])">
           <template #body="{ data }">
             <div class="flex items-center gap-2">
               <Button

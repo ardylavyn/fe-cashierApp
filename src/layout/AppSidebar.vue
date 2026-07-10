@@ -32,6 +32,12 @@ const menuItems = ref([
         to: "/",
         label: "Dashboard",
       },
+      {
+        icon: "pi pi-shopping-cart",
+        // kalau diklik → pergi ke URL "/"
+        to: "/pos",
+        label: "POS",
+      },
     ],
   },
 
@@ -71,14 +77,23 @@ const menuItems = ref([
     ],
   },
 ]);
+
+const props = defineProps({
+  sidebarOpen: Boolean,
+});
+
+const emit = defineEmits(["close"]);
 </script>
 
 <template>
-  <div class="fixed left-0 top-0 h-full w-64 bg-white border-r border-surface-200 flex flex-col z-50 transition-all duration-300">
+  <div
+    class="fixed left-0 top-0 h-full w-64 bg-white border-r border-surface-200 flex flex-col z-50 transition-transform duration-300"
+    :class="[props.sidebarOpen ? 'translate-x-0' : '-translate-x-full', 'lg:translate-x-0']"
+  >
     <!-- Logo -->
     <div class="h-20 flex items-center px-8 border-b border-surface-100">
-      <div class="w-8 h8 bg-primary-600 rounded-lg flex items-center justify-center text-white mr-3">
-        <i class="pi pi-bolt text-lg" />
+      <div class="w-20 h-20 rounded-lg flex items-center justify-center text-white mr-2">
+        <img src="/src/assets/logo.png" alt="Logo Nikiecho" />
       </div>
       <span class="text-xl font-bold text-surface-900">Niki Echo</span>
     </div>
@@ -86,7 +101,7 @@ const menuItems = ref([
     <!-- Menu -->
     <div class="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-6">
       <div v-for="(section, i) in menuItems" :key="i">
-        <div class="text-xs font-semibold text-surfaces-400 uppercase tracking-winder mb-3 px-3">
+        <div class="text-xs font-semibold text-surface-400 uppercase tracking-wider mb-3 px-3">
           {{ section.label }}
         </div>
 
@@ -94,10 +109,11 @@ const menuItems = ref([
         <div class="flex flex-col gap-1">
           <RouterLink
             v-for="(item, j) in section.items"
-            :to="item.to"
             :key="item.label"
-            class="flex items-center gap-3 px-3 py-2.5 rounder-lg transition-colors duration-200"
-            :class="[route.path == item.to ? 'bg-surface-100 text-primary-600' : 'text-surface-900 hover:bg-surface-100']"
+            :to="item.to"
+            @click="emit('close')"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors duration-200"
+            :class="[route.path === item.to ? 'bg-surface-100 text-primary-600' : 'text-surface-900 hover:bg-surface-100']"
           >
             <i :class="[item.icon, 'text-lg']"></i>
             <span class="font-medium text-sm">{{ item.label }}</span>
@@ -126,6 +142,8 @@ const menuItems = ref([
       </button>
     </div>
   </div>
+
+  <div v-if="props.sidebarOpen" class="fixed inset-0 bg-black/40 z-40 lg:hidden" @click="emit('close')"></div>
 
   <!-- Dialog Log Out -->
   <Dialog v-model:visible="logoutDialog" modal header="Confirm Logout" :modal="true" class="w-100">

@@ -3,6 +3,7 @@ import Login from "@/pages/auth/Login.vue";
 import CustomerForm from "@/pages/customers/CustomerForm.vue";
 import CustomerList from "@/pages/customers/CustomerList.vue";
 import Dashboard from "@/pages/Dashboard.vue";
+import POSView from "@/pages/pos/PosView.vue";
 import CategoryForm from "@/pages/product-categoires/CategoryForm.vue";
 import CategoryList from "@/pages/product-categoires/CategoryList.vue";
 import ProductsForm from "@/pages/products/ProductsForm.vue";
@@ -11,6 +12,7 @@ import RefundForm from "@/pages/refunds/RefundForm.vue";
 import RefundsList from "@/pages/refunds/RefundsList.vue";
 import TransactionsForm from "@/pages/transactions/TransactionsForm.vue";
 import TransactionsList from "@/pages/transactions/TransactionsList.vue";
+import Forbidden from "@/pages/Forbidden.vue";
 import { useAuthStore } from "@/stores/auth.store";
 import { createRouter, createWebHistory } from "vue-router";
 
@@ -33,6 +35,12 @@ const router = createRouter({
     },
 
     {
+      path: "/403",
+      name: "forbidden",
+      component: Forbidden,
+    },
+
+    {
       path: "/",
       component: AppLayout,
 
@@ -45,71 +53,90 @@ const router = createRouter({
           path: "",
           name: "dashboard",
           component: Dashboard,
+          meta: { permission: "view_dashboard_statistics" },
         },
         {
           path: "/product-categories",
           name: "product-categories",
           component: CategoryList,
+          meta: { permission: "view_product_categories" },
         },
         {
           path: "/product-categories/create",
           name: "product-categories-create",
           component: CategoryForm,
+          meta: { permission: "create_product_categories" },
         },
         {
           path: "/product-categories/:id/edit",
           name: "product-categories-edit",
           component: CategoryForm,
+          meta: { permission: "edit_product_categories" },
         },
         {
           path: "/products",
           name: "products",
           component: ProductsList,
+          meta: { permission: "view_products" },
         },
         {
           path: "/products/create",
           name: "products-create",
           component: ProductsForm,
+          meta: { permission: "create_products" },
         },
         {
           path: "/products/:id/edit",
           name: "products-edit",
           component: ProductsForm,
+          meta: { permission: "edit_products" },
         },
         {
           path: "/customers",
           name: "customers",
           component: CustomerList,
+          meta: { permission: "view_customers" },
         },
         {
           path: "/customers/create",
           name: "customers-create",
           component: CustomerForm,
+          meta: { permission: "create_customers" },
         },
         {
           path: "/customers/:id/edit",
           name: "customers-edit",
           component: CustomerForm,
+          meta: { permission: "edit_customers" },
         },
         {
           path: "/transaction",
           name: "transactions",
           component: TransactionsList,
+          meta: { permission: "view_transactions" },
         },
         {
           path: "/transactions/:id/show",
           name: "transactions-show",
           component: TransactionsForm,
+          meta: { permission: "view_transactions" },
         },
         {
           path: "/refund",
           name: "refunds",
           component: RefundsList,
+          meta: { permission: "view_refunds" },
         },
         {
           path: "/refunds/create",
           name: "refunds-create",
           component: RefundForm,
+          meta: { permission: "create_refunds" },
+        },
+        {
+          path: "/pos",
+          name: "pos",
+          component: POSView,
         },
       ],
     },
@@ -216,6 +243,12 @@ router.beforeEach(async (to) => {
      * langsung ke dashboard
      */
     return "/";
+  }
+
+  const permission = to.meta.permission as string | undefined;
+
+  if (permission && auth.user && !auth.hasPermission(permission)) {
+    return "/403";
   }
 
   /*

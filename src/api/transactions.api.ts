@@ -20,3 +20,13 @@ export const refundTransaction = (
     }[];
   },
 ) => api.post(`/transactions/${id}/refund`, payload);
+
+export const createTransaction = (payload: {
+  customer_id: number;
+  items: {
+    product_id: number;
+    quantity: number;
+  }[];
+  send_notification?: boolean;
+  paid?: number;
+}) => api.post("/transactions", payload);
